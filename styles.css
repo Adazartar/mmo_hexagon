@@ -1,0 +1,22 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    user-select: none; /* Disable text selection */
+    overflow: hidden;
+}
+
+.grid {
+    width: 3150px; /* Set based on grid size */
+    height: 2050px; /* Set based on grid size */
+    position: absolute;
+    background: grey;
+}
+
+.hex {
+    background: white;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    height: 50px;
+    width: 57px;
+    position: absolute;
+    margin: 40px;
+}
