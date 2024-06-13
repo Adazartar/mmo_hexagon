@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const distance_threshold = 0.8;
     let mouseX = 0;
     let mouseY = 0;
+    let spacePressed = false;
 
     function updateMousePosition(e) {
         mouseX = e.clientX;
@@ -22,27 +23,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function scrollOnBorder() {
-        const { clientWidth, clientHeight } = document.documentElement;
+        if(spacePressed){
+            const { clientWidth, clientHeight } = document.documentElement;
 
-        // Will go b/w -1 and 1 0 is when we don't want to move in a direction at all (in middle of axis)
-        let xRelative = (mouseX - clientWidth / 2) / clientWidth * 2;
-        let yRelative = (mouseY - clientHeight / 2) / clientHeight * 2;
+            // Will go b/w -1 and 1 0 is when we don't want to move in a direction at all (in middle of axis)
+            let xRelative = (mouseX - clientWidth / 2) / clientWidth * 2;
+            let yRelative = (mouseY - clientHeight / 2) / clientHeight * 2;
 
-        // Make unit vector
-        let magnitude = Math.sqrt(xRelative * xRelative + yRelative * yRelative);
-        let unit_x = xRelative / magnitude;
-        let unit_y = yRelative / magnitude;
+            // Make unit vector
+            let magnitude = Math.sqrt(xRelative * xRelative + yRelative * yRelative);
+            let unit_x = xRelative / magnitude;
+            let unit_y = yRelative / magnitude;
 
 
-        if (Math.abs(xRelative) > distance_threshold || Math.abs(yRelative) > distance_threshold) {
-            // At the threshold is 1x then 1 should be 2x 
-            let larger = (Math.abs(xRelative) > Math.abs(yRelative) ? Math.abs(xRelative) : Math.abs(yRelative));
-            let weighted_scroll = (1 + (larger - distance_threshold) / (1 - distance_threshold)) * scrollSpeed;
-            window.scrollBy(unit_x * weighted_scroll, unit_y * weighted_scroll);
+            if (Math.abs(xRelative) > distance_threshold || Math.abs(yRelative) > distance_threshold) {
+                // At the threshold is 1x then 1 should be 2x 
+                let larger = (Math.abs(xRelative) > Math.abs(yRelative) ? Math.abs(xRelative) : Math.abs(yRelative));
+                let weighted_scroll = (1 + (larger - distance_threshold) / (1 - distance_threshold)) * scrollSpeed;
+                window.scrollBy(unit_x * weighted_scroll, unit_y * weighted_scroll);
+            }
+        }
+    }
+
+    function handleKeyDown(e) {
+        if (e.code === 'Space') {
+            spacePressed = true;
+        }
+    }
+
+    function handleKeyUp(e) {
+        if (e.code === 'Space') {
+            spacePressed = false;
         }
     }
 
     document.addEventListener('mousemove', updateMousePosition);
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
 
     // Set up a timer to check the mouse position and scroll if necessary
     setInterval(scrollOnBorder, 20); // Adjust the interval as needed
